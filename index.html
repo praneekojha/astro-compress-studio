@@ -4,10 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#080b14">
-  <meta name="description" content="AstroCompress Studio Pro — Video compression, astrophotography stacking, and image optimization in your browser.">
+  <meta name="description" content="AstroCompress Studio Pro — Professional client-side media compression and astrophotography stacking suite.">
   <title>AstroCompress Studio Pro</title>
   <link rel="stylesheet" href="style.css">
-  <!-- FFmpeg.wasm for client-side video processing -->
   <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
 </head>
 <body>
@@ -15,136 +14,136 @@
     <aside class="sidebar">
       <a class="brand" href="#"><span class="brand-icon">✦</span><span>AstroCompress <small>STUDIO PRO</small></span></a>
       <div class="side-caption">WORKSPACE</div>
-      <div class="nav-links">
+      <nav class="nav-links">
         <a class="nav active" href="#" data-tool="image"><span>▦</span> Image compressor</a>
         <a class="nav" href="#" data-tool="video"><span>🎬</span> Video compressor</a>
         <a class="nav" href="#" data-tool="stacker"><span>✨</span> Astro Stacker</a>
-      </div>
+      </nav>
       <div class="sidebar-bottom">
-        <div class="plan">✦ <span><b>Local Processing</b><small>100% Private & Free</small></span></div>
+        <div class="plan">✦ <span><b>Zero-Server Core</b><small>Local WebAssembly Engine</small></span></div>
       </div>
     </aside>
 
     <main class="main">
       <header class="topbar">
         <div class="crumb" id="currentCrumb">Workspace <span>/</span> Image compressor</div>
-        <div class="top-right"><span class="secure"><i></i> Browser Engine</span><div class="avatar">A</div></div>
+        <div class="top-right"><span class="secure"><i></i> Secure Local Processing</span><div class="avatar">A</div></div>
       </header>
       
       <section class="content">
-        <!-- TOOL 1: IMAGE COMPRESSOR -->
+        <!-- TOOL 1: IMAGE -->
         <div class="tool-section" id="tool-image">
           <div class="intro">
             <div>
-              <div class="overline">IMAGE OPTIMIZATION WORKSPACE</div>
-              <h1>AstroCompress <span>Studio Pro</span></h1>
-              <p>Compress your photos without losing visual quality.</p>
+              <div class="overline">ADVANCED IMAGE OPTIMIZATION</div>
+              <h1>Image <span>Compressor</span></h1>
+              <p>Lossless compression & format conversion entirely in your browser.</p>
             </div>
-            <div class="version">TOOL <b>01</b></div>
+            <div class="version">EDITION <b>v2.0</b></div>
           </div>
 
           <section class="workspace">
             <div class="section-head">
-              <div><h2>Upload image</h2><p>Select a JPG, PNG, or WEBP photo.</p></div>
+              <div><h2>Upload image</h2><p>Select a JPG, PNG, or WEBP source file.</p></div>
               <span class="step">01 / 02</span>
             </div>
             <label class="dropzone" for="fileInputImg">
               <input id="fileInputImg" type="file" accept="image/*" hidden>
               <span class="upload-icon">↑</span>
               <strong>Drop your photo here</strong>
-              <span class="drop-sub">or <u>browse files</u></span>
+              <span class="drop-sub">or <u>browse local files</u></span>
             </label>
             <div class="editor hidden" id="editorImg">
               <div class="preview-card">
-                <div class="preview-label">PREVIEW</div>
+                <div class="preview-label">SOURCE PREVIEW</div>
                 <img id="previewImg" alt="Preview">
                 <div class="file-meta" id="originalMetaImg"></div>
               </div>
               <div class="settings">
-                <h2>Quality Settings</h2>
-                <label class="setting-label" for="qualityImg">Quality: <b id="qualityVal">75%</b></label>
+                <h2>Compression Parameters</h2>
+                <label class="setting-label" for="qualityImg">Quality Level: <b id="qualityVal">75%</b></label>
                 <input id="qualityImg" type="range" min="10" max="100" value="75">
-                <button class="primary" id="compressImgBtn">Compress Image <span>→</span></button>
+                <button class="primary" id="compressImgBtn">Process Image <span>→</span></button>
               </div>
             </div>
             <div class="result hidden" id="resultImg">
-              <h2>Done!</h2>
-              <p id="resultNoteImg">Image optimized successfully.</p>
-              <a class="download" id="downloadImgBtn" download="optimized.webp">↓ Download Image</a>
+              <h2>Optimization Complete</h2>
+              <p id="resultNoteImg" class="file-meta">Image processed successfully.</p>
+              <a class="download" id="downloadImgBtn" download="optimized.webp">↓ Download Optimized Image</a>
             </div>
           </section>
         </div>
 
-        <!-- TOOL 2: VIDEO COMPRESSOR -->
+        <!-- TOOL 2: VIDEO -->
         <div class="tool-section hidden" id="tool-video">
           <div class="intro">
             <div>
-              <div class="overline">HIGH-FPS VIDEO COMPRESSOR</div>
-              <h1>Video <span>Studio</span></h1>
-              <p>Compress MP4/MOV videos preserving original FPS and quality.</p>
+              <div class="overline">HIGH-FPS VIDEO ENGINE</div>
+              <h1>Video <span>Compressor</span></h1>
+              <p>Transcode high-framerate clips using FFmpeg.wasm without quality loss.</p>
             </div>
-            <div class="version">TOOL <b>02</b></div>
+            <div class="version">EDITION <b>v2.0</b></div>
           </div>
 
           <section class="workspace">
             <div class="section-head">
-              <div><h2>Upload video</h2><p>Select an MP4 or MOV video file.</p></div>
+              <div><h2>Upload high-FPS video</h2><p>Select MP4 or MOV files.</p></div>
             </div>
             <label class="dropzone" for="fileInputVideo">
               <input id="fileInputVideo" type="file" accept="video/mp4,video/quicktime" hidden>
               <span class="upload-icon">🎬</span>
-              <strong>Drop your video here</strong>
-              <span class="drop-sub">or <u>browse files</u> (Max recommended: 100MB on mobile)</span>
+              <strong>Drop your video clip here</strong>
+              <span class="drop-sub">or <u>browse files</u></span>
             </label>
             <div class="editor hidden" id="editorVideo">
               <p id="videoFileName" class="file-meta"></p>
-              <button class="primary" id="compressVideoBtn">Start FFmpeg Compression <span>→</span></button>
-              <p id="videoStatus" class="drop-sub" style="margin-top:10px;"></p>
+              <button class="primary" id="compressVideoBtn">Initialize FFmpeg Transcode <span>→</span></button>
+              <p id="videoStatus" class="drop-sub" style="margin-top:12px;"></p>
             </div>
             <div class="result hidden" id="resultVideo">
-              <h2>Video Ready</h2>
-              <a class="download" id="downloadVideoBtn" download="compressed-video.mp4">↓ Download Compressed Video</a>
+              <h2>Transcode Successful</h2>
+              <a class="download" id="downloadVideoBtn" download="compressed-video.mp4">↓ Download Processed Video</a>
             </div>
           </section>
         </div>
 
-        <!-- TOOL 3: ASTROPHOTOGRAPHY STACKER -->
+        <!-- TOOL 3: ASTRO STACKER -->
         <div class="tool-section hidden" id="tool-stacker">
           <div class="intro">
             <div>
-              <div class="overline">ASTROPHOTOGRAPHY STACKING ENGINE</div>
+              <div class="overline">DEEP-SKY PHOTOGRAPHY</div>
               <h1>Star <span>Stacker</span></h1>
-              <p>Stack multiple raw sky photos to remove noise and reveal nebulae.</p>
+              <p>Align and merge multiple raw astrophotography exposures to suppress noise.</p>
             </div>
-            <div class="version">TOOL <b>03</b></div>
+            <div class="version">EDITION <b>v2.0</b></div>
           </div>
 
           <section class="workspace">
             <div class="section-head">
-              <div><h2>Upload multiple sky frames</h2><p>Select 2 to 20 raw or JPG starry night photos.</p></div>
+              <div><h2>Upload exposure frames</h2><p>Select multiple starry night captures.</p></div>
             </div>
             <label class="dropzone" for="fileInputStack">
               <input id="fileInputStack" type="file" accept="image/*" multiple hidden>
               <span class="upload-icon">✨</span>
-              <strong>Drop multiple star photos here</strong>
+              <strong>Drop multiple raw/JPG frames</strong>
               <span class="drop-sub">or <u>browse files</u></span>
             </label>
             <div class="editor hidden" id="editorStack">
-              <p id="stackFileCount" class="file-meta">0 frames selected</p>
-              <button class="primary" id="stackFramesBtn">Align & Stack Frames <span>→</span></button>
-              <p id="stackStatus" class="drop-sub" style="margin-top:10px;"></p>
+              <p id="stackFileCount" class="file-meta">0 frames loaded</p>
+              <button class="primary" id="stackFramesBtn">Execute Stacking Pipeline <span>→</span></button>
+              <p id="stackStatus" class="drop-sub" style="margin-top:12px;"></p>
             </div>
             <div class="result hidden" id="resultStack">
-              <h2>Stacking Complete!</h2>
-              <canvas id="stackedCanvas" style="width:100%; max-height:300px; object-fit:contain; margin:10px 0;"></canvas>
-              <a class="download" id="downloadStackBtn" download="stacked-astro.png">↓ Download Stacked Image</a>
+              <h2>Stacking Pipeline Complete</h2>
+              <canvas id="stackedCanvas" style="width:100%; max-height:300px; object-fit:contain; margin:12px 0;"></canvas>
+              <a class="download" id="downloadStackBtn" download="stacked-astro.png">↓ Download Master Stack</a>
             </div>
           </section>
         </div>
 
         <footer>
-          <span>ASTROCOMPRESS STUDIO PRO</span>
-          <span>100% Client-Side Processing</span>
+          <span>© <span id="copyYear">2026</span> AstroCompress Studio Pro. All rights reserved.</span>
+          <span>100% Client-Side Architecture · Privacy Guaranteed</span>
         </footer>
       </section>
     </main>
