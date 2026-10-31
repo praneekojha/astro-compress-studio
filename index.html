@@ -1,144 +1,78 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>AstroPress | Free Photo & Video Compressor and Sky Stacker</title>
-<meta name="description" content="Free tools to compress photos and videos and stack raw sky photos into one astrophotography image. Everything runs in your browser.">
-<meta name="theme-color" content="#0B1020">
-<meta property="og:type" content="website">
-<meta property="og:title" content="AstroPress: Your Media. Smaller. Sharper. Private.">
-<meta property="og:description" content="Compress images, reduce video sizes and stack night-sky photos in your browser. Free, no account.">
-<meta property="og:url" content="https://praneekojha.github.io/astro-compress-studio/">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="AstroPress">
-<meta name="twitter:description" content="Free in-browser photo compressor, video compressor and sky stacker.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230B1020'/%3E%3Cpath d='M32 10l5 17 17 5-17 5-5 17-5-17-17-5 17-5z' fill='%237C5CFC'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AstroPress - Media Processing</title>
+
+  <!-- Open Graph & Social Media Sharing Meta Tags (Shows Logo on Share Links) -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://yourwebsite.com/">
+  <meta property="og:title" content="AstroPress - High Quality Video Processing">
+  <meta property="og:description" content="Compress and scale your videos up to 4K without losing FPS.">
+  <meta property="og:image" content="https://yourwebsite.com/logo.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://yourwebsite.com/">
+  <meta name="twitter:title" content="AstroPress - Video Compressor">
+  <meta name="twitter:description" content="Compress and scale videos seamlessly.">
+  <meta name="twitter:image" content="https://yourwebsite.com/logo.png">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Load FFmpeg.wasm Library for Browser-Side Video Processing -->
+  <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
 </head>
 <body>
-<a class="skip" href="#main">Skip to content</a>
-<header class="nav">
-  <a class="brand" href="#home" aria-label="AstroPress home"><svg width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 6l6 18 18 6-18 6-6 22-6-22-18-6 18-6z" fill="currentColor"/></svg>AstroPress</a>
-  <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="links"><span></span><span></span><span></span></button>
-  <nav id="links" class="links" aria-label="Main">
-    <a href="#home">Home</a><a href="#photo">Photo Compressor</a><a href="#video">Video Compressor</a><a href="#stacker">Sky Stacker</a><a href="#about">About</a>
-    <a href="https://github.com/praneekojha/astro-compress-studio" target="_blank" rel="noopener">GitHub</a>
-  </nav>
-  <button class="theme" id="theme" aria-label="Toggle light or dark theme">◐</button>
-</header>
 
-<main id="main" tabindex="-1">
-<!-- HOME -->
-<section class="view" id="home">
-  <div class="hero">
-    <h1>Your Media. Smaller. Sharper. Private.</h1>
-    <p class="lead">Compress images, reduce video sizes, and create stunning astrophotography stacks — all directly in your browser.</p>
-    <div class="heroBtns"><a class="btn" href="#photo">Compress a photo</a><a class="btn ghost" href="#stacker">Stack the night sky</a></div>
-  </div>
-  <div class="cards">
-    <a class="card tool" href="#photo"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M4 18l5-5 4 4 3-3 4 4"/></svg><h2>Photo Compressor</h2><p>Shrink JPEG, PNG and WebP files. Compare before and after, then download.</p><span class="cta">Open tool</span></a>
-    <a class="card tool" href="#video"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="13" height="14" rx="3"/><path d="M16 10l5-3v10l-5-3"/></svg><h2>Video Compressor</h2><p>Re-encode clips to H.264 at 1080p, 720p or 480p with a quality control.</p><span class="cta">Open tool</span></a>
-    <a class="card tool" href="#stacker"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/></svg><h2>Sky Stacker</h2><p>Merge many night-sky photos into one cleaner image or a star-trail shot.</p><span class="cta">Open tool</span></a>
-  </div>
-  <ul class="trust">
-    <li>100% free</li><li>No account required</li><li>Browser-based processing</li><li>Privacy focused: files stay on your device</li>
-  </ul>
-</section>
-
-<!-- PHOTO -->
-<section class="view" id="photo" hidden>
-  <h1>Photo Compressor</h1>
-  <p class="lead">PNG is lossless. WebP and JPEG are lossy: smaller files, with a quality slider you control.</p>
-  <div class="work">
-    <div class="panel">
-      <label class="drop" id="pDrop" tabindex="0"><input type="file" id="pFile" accept="image/*" multiple hidden><b>Drop photos here</b><span>or click to choose files</span></label>
-      <div class="ctl">
-        <label>Format<select id="pFmt"><option value="image/webp">WebP (small, high quality)</option><option value="image/jpeg">JPEG</option><option value="image/png">PNG (lossless)</option></select></label>
-        <label>Quality: <output id="pQv">90</output>%<input type="range" id="pQ" min="30" max="100" value="90"></label>
-        <label>Max width<select id="pW"><option value="0">Original size</option><option value="3840">3840 px</option><option value="2560">2560 px</option><option value="1920">1920 px</option></select></label>
-      </div>
+  <div class="card">
+    <div class="header">
+      <img src="logo.png" alt="AstroPress Logo" class="app-logo">
+      <h2>AstroPress</h2>
     </div>
-    <div class="panel">
-      <div class="cmp" id="cmp" hidden>
-        <img id="cmpA" alt="Original photo"><img id="cmpB" alt="Compressed photo">
-        <input type="range" id="cmpR" min="0" max="100" value="50" aria-label="Before and after slider">
-        <span class="tag l">Original</span><span class="tag r">Compressed</span>
-      </div>
-      <p class="muted" id="pEmpty">Your before-and-after comparison appears here.</p>
-      <ul class="rows" id="pRows" aria-live="polite"></ul>
-      <button class="btn ghost" id="pAll" hidden>Download all</button>
+
+    <!-- Media Input -->
+    <div class="form-group">
+      <label for="videoInput">Select Video or Photo:</label>
+      <input type="file" id="videoInput" accept="video/*,image/*">
+    </div>
+
+    <!-- Video Preview -->
+    <video id="previewVideo" controls style="display:none;"></video>
+
+    <!-- Resolution Selector (4K, 2K, 1080p, 720p) -->
+    <div class="form-group">
+      <label for="resolutionSelect">Resolution (never upscales):</label>
+      <select id="resolutionSelect">
+        <option value="2160">4K (2160p)</option>
+        <option value="1440">2K (1440p)</option>
+        <option value="1080" selected>1080p</option>
+        <option value="720">720p</option>
+      </select>
+    </div>
+
+    <!-- CRF Slider -->
+    <div class="form-group">
+      <label for="crfRange">Quality: CRF (<span id="crfValue">18</span>)</label>
+      <input type="range" id="crfRange" min="16" max="28" value="18">
+      <small>16–18 near-lossless, 20–23 balanced, 26+ smallest size.</small>
+    </div>
+
+    <button id="compressBtn">Process & Compress Video</button>
+
+    <!-- Status & Error Output -->
+    <div id="statusMessage" class="status" style="display:none;"></div>
+
+    <!-- Download Output -->
+    <div id="downloadContainer" style="display:none; margin-top: 15px;">
+      <a id="downloadBtn" href="#" download="compressed_astropress.mp4">Download Output Video</a>
     </div>
   </div>
-</section>
 
-<!-- VIDEO -->
-<section class="view" id="video" hidden>
-  <h1>Video Compressor</h1>
-  <p class="lead">Encodes H.264 on your device. Best for short clips; very large videos can be slow or fail on phones. The encoder (about 30 MB) downloads from a CDN the first time you compress.</p>
-  <div class="work">
-    <div class="panel">
-      <label class="drop" id="vDrop" tabindex="0"><input type="file" id="vFile" accept="video/*" hidden><b>Drop a video here</b><span>or click to choose a file</span></label>
-      <video id="vPrev" controls playsinline hidden></video>
-      <div class="ctl">
-        <label>Resolution (never upscales)<select id="vRes"><option value="1080">1080p</option><option value="720" selected>720p</option><option value="480">480p</option></select></label>
-        <label>Quality: CRF <output id="vQv">23</output><input type="range" id="vQ" min="16" max="32" value="23"><small>16–18 near-lossless, 20–23 balanced, 26+ smallest.</small></label>
-        <button class="btn" id="vGo" disabled>Compress video</button>
-      </div>
-    </div>
-    <div class="panel">
-      <progress id="vProg" max="100" value="0" hidden></progress>
-      <p id="vMsg" class="muted" aria-live="polite">Choose a video to begin. The final size is shown when encoding finishes.</p>
-      <div id="vOut" hidden></div>
-    </div>
-  </div>
-</section>
-
-<!-- STACKER -->
-<section class="view" id="stacker" hidden>
-  <h1>Sky Stacker</h1>
-  <p class="lead">Select 2 or more photos of the same sky from a fixed tripod. Average reduces noise; Lighten builds star trails. Stars are not auto-aligned.</p>
-  <div class="work">
-    <div class="panel">
-      <label class="drop" id="sDrop" tabindex="0"><input type="file" id="sFile" accept="image/*" multiple hidden><b>Drop sky photos here</b><span>or click to choose files</span></label>
-      <ul class="thumbs" id="sThumbs"></ul>
-      <div class="ctl">
-        <label>Mode<select id="sMode"><option value="avg">Average (cleaner, less noise)</option><option value="max">Lighten (star trails)</option></select></label>
-        <label>Max width<select id="sW"><option value="3000">3000 px (recommended)</option><option value="2000">2000 px (phones)</option><option value="4500">4500 px (large)</option></select></label>
-        <button class="btn" id="sGo" disabled>Stack photos</button>
-      </div>
-    </div>
-    <div class="panel">
-      <p id="sMsg" class="muted" aria-live="polite">Add at least 2 photos.</p>
-      <canvas id="sCanvas" hidden></canvas>
-      <div class="ctl" id="sAdj" hidden>
-        <label>Brightness: <output id="sBv">100</output>%<input type="range" id="sB" min="50" max="200" value="100"></label>
-        <label>Contrast: <output id="sCv">100</output>%<input type="range" id="sC" min="50" max="200" value="100"></label>
-        <button class="btn" id="sDl">Download PNG</button>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ABOUT -->
-<section class="view" id="about" hidden>
-  <h1>About AstroPress</h1>
-  <div class="panel prose">
-    <p><b>Pranik Ojha</b> is the founder of AstroPress. The goal is simple: free, professional tools for photographers and sky watchers.</p>
-    <h2>Privacy</h2>
-    <p>Your photos and videos are processed on your device and are never uploaded by AstroPress. The only network request is the first video compression, which downloads the open-source encoder (ffmpeg.wasm) from the jsDelivr CDN. Your theme choice is saved in your browser. AstroPress sets no cookies and has no accounts or analytics. You keep full rights to every file you process.</p>
-    <h2 id="faq">FAQ</h2>
-    <details><summary>Is it really lossless?</summary><p>PNG output is lossless. WebP, JPEG and video are lossy, but high settings look the same to the eye. Smaller files always mean some data is discarded.</p></details>
-    <details><summary>Are my files uploaded?</summary><p>No. Everything is processed locally in your browser.</p></details>
-    <details><summary>Why is video slow?</summary><p>Your own device does the work, so long or very large videos take time and memory.</p></details>
-    <details><summary>Why does my stack look blurry?</summary><p>Photos are not auto-aligned. Use a tripod and keep the framing identical.</p></details>
-    <h2>Feedback</h2>
-    <p>Found a bug or have an idea? <a href="https://github.com/praneekojha/astro-compress-studio/issues" target="_blank" rel="noopener">Open an issue on GitHub</a>.</p>
-  </div>
-</section>
-</main>
-
-<footer class="foot"><p>© 2026 Pranik Ojha. All rights reserved. AstroPress and its design are protected by copyright.</p></footer>
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
