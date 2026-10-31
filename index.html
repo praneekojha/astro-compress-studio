@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080b14">
+  <meta name="description" content="AstroCompress Studio Pro — compress and convert images in your browser.">
+  <title>AstroCompress Studio Pro</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#"><span class="brand-icon">✦</span><span>AstroCompress <small>STUDIO PRO</small></span></a>
+      <div class="side-caption">WORKSPACE</div>
+      <a class="nav active" href="#"><span>▦</span> Image compressor</a>
+      <div class="side-caption tools-caption">TOOLS</div>
+      <div class="nav muted"><span>◇</span> Format converter <em>SOON</em></div>
+      <div class="nav muted"><span>◫</span> Batch processing <em>SOON</em></div>
+      <div class="sidebar-bottom"><div class="plan">✦ <span><b>Studio workspace</b><small>Images stay on your device</small></span></div></div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar"><div class="crumb">Workspace <span>/</span> Image compressor</div><div class="top-right"><span class="secure"><i></i> Local processing</span><div class="avatar">A</div></div></header>
+      <section class="content">
+        <div class="intro">
+          <div><div class="overline">IMAGE OPTIMIZATION WORKSPACE</div><h1>AstroCompress <span>Studio Pro</span></h1><p>Compress your images. Keep the quality. Save space.</p></div>
+          <div class="version">BROWSER-BASED <b>01</b></div>
+        </div>
+
+        <section class="workspace">
+          <div class="section-head"><div><h2>Upload image</h2><p>Choose an image from your device to get started.</p></div><span class="step">01 / 02</span></div>
+          <label class="dropzone" id="dropzone" for="fileInput">
+            <input id="fileInput" type="file" accept="image/*" hidden>
+            <span class="upload-icon">↑</span>
+            <strong>Drop your image here</strong>
+            <span class="drop-sub">or <u>browse files</u> from your device</span>
+            <span class="formats">JPG · PNG · WEBP · GIF (first frame)</span>
+          </label>
+
+          <div class="editor hidden" id="editor">
+            <div class="preview-card"><div class="preview-label">ORIGINAL IMAGE</div><img id="preview" alt="Selected image preview"><div class="file-meta" id="originalMeta"></div></div>
+            <div class="settings">
+              <div class="section-head compact"><div><h2>Compression settings</h2><p>Adjust the output to your needs.</p></div></div>
+              <label class="setting-label" for="quality">Image quality <b id="qualityValue">75%</b></label>
+              <input id="quality" type="range" min="10" max="100" value="75">
+              <div class="range-ends"><span>Smaller file</span><span>Higher quality</span></div>
+              <label class="setting-label" for="format">Output format</label>
+              <select id="format"><option value="image/webp">WebP — recommended</option><option value="image/jpeg">JPEG</option><option value="image/png">PNG — lossless</option></select>
+              <button class="primary" id="compressBtn">Compress image <span>→</span></button>
+              <button class="text-button" id="resetBtn">Choose another image</button>
+            </div>
+          </div>
+
+          <section class="result hidden" id="result">
+            <div class="result-heading"><div><span class="success-dot">✓</span><h2>Compression complete</h2></div><span class="step">02 / 02</span></div>
+            <div class="result-grid">
+              <div class="result-stat"><small>ORIGINAL SIZE</small><strong id="beforeSize">—</strong></div>
+              <div class="result-stat"><small>COMPRESSED SIZE</small><strong id="afterSize">—</strong></div>
+              <div class="result-stat highlight"><small>SPACE SAVED</small><strong id="saved">—</strong></div>
+            </div>
+            <div class="result-actions"><span id="resultNote">Your optimized image is ready.</span><a class="download" id="downloadBtn" download="astrocompress-image.webp">↓ Download image</a></div>
+          </section>
+        </section>
+        <footer><span>ASTROCOMPRESS STUDIO PRO</span><span>Private by design · Files are processed in your browser</span></footer>
+      </section>
+    </main>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
