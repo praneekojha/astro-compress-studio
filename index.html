@@ -1,153 +1,97 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#080b14">
-  <meta name="description" content="AstroCompress Studio Pro — Professional client-side media compression and astrophotography stacking suite.">
-  <title>AstroCompress Studio Pro</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AstroPress | Free Photo &amp; Video Compressor and Sky Stacker</title>
+<meta name="description" content="Free tools to compress photos and videos and stack raw sky photos into one astrophotography image. Everything runs in your browser.">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="app-shell">
-    <aside class="sidebar">
-      <a class="brand" href="#"><span class="brand-icon">✦</span><span>AstroCompress <small>STUDIO PRO</small></span></a>
-      <div class="side-caption">WORKSPACE</div>
-      <nav class="nav-links">
-        <a class="nav active" href="#" data-tool="image"><span>▦</span> Image compressor</a>
-        <a class="nav" href="#" data-tool="video"><span>🎬</span> Video compressor</a>
-        <a class="nav" href="#" data-tool="stacker"><span>✨</span> Astro Stacker</a>
-      </nav>
-      <div class="sidebar-bottom">
-        <div class="plan">✦ <span><b>Zero-Server Core</b><small>Local WebAssembly Engine</small></span></div>
-      </div>
-    </aside>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="#top"><i>✦</i>AstroPress</a>
+  <nav><a href="#tools">Tools</a><a href="#about">About</a><a href="#faq">FAQ</a></nav>
+</div></header>
 
-    <main class="main">
-      <header class="topbar">
-        <div class="crumb" id="currentCrumb">Workspace <span>/</span> Image compressor</div>
-        <div class="top-right"><span class="secure"><i></i> Secure Local Processing</span><div class="avatar">A</div></div>
-      </header>
-      
-      <section class="content">
-        <!-- TOOL 1: IMAGE -->
-        <div class="tool-section" id="tool-image">
-          <div class="intro">
-            <div>
-              <div class="overline">ADVANCED IMAGE OPTIMIZATION</div>
-              <h1>Image <span>Compressor</span></h1>
-              <p>Lossless compression & format conversion entirely in your browser.</p>
-            </div>
-            <div class="version">EDITION <b>v2.0</b></div>
-          </div>
+<main id="top">
+<section class="hero wrap">
+  <span class="pill">100% free · private · runs in your browser</span>
+  <h1>Compress smarter.<br><span class="grad">Stack the night sky.</span></h1>
+  <p>Shrink photos and videos with near-original quality, and combine many raw sky photos into one clean astrophotography image. No sign-up, no uploads, no cost.</p>
+  <a class="btn" href="#tools">Start for free</a>
+</section>
 
-          <section class="workspace">
-            <div class="section-head">
-              <div><h2>Upload image</h2><p>Select a JPG, PNG, or WEBP source file.</p></div>
-              <span class="step">01 / 02</span>
-            </div>
-            <label class="dropzone" for="fileInputImg">
-              <input id="fileInputImg" type="file" accept="image/*" hidden>
-              <span class="upload-icon">↑</span>
-              <strong>Drop your photo here</strong>
-              <span class="drop-sub">or <u>browse local files</u></span>
-            </label>
-            <div class="editor hidden" id="editorImg">
-              <div class="preview-card">
-                <div class="preview-label">SOURCE PREVIEW</div>
-                <img id="previewImg" alt="Preview">
-                <div class="file-meta" id="originalMetaImg"></div>
-              </div>
-              <div class="settings">
-                <h2>Compression Parameters</h2>
-                <label class="setting-label" for="qualityImg">Quality Level: <b id="qualityVal">75%</b></label>
-                <input id="qualityImg" type="range" min="10" max="100" value="75">
-                <button class="primary" id="compressImgBtn">Process Image <span>→</span></button>
-              </div>
-            </div>
-            <div class="result hidden" id="resultImg">
-              <h2>Optimization Complete</h2>
-              <p id="resultNoteImg" class="file-meta">Image processed successfully.</p>
-              <a class="download" id="downloadImgBtn" download="optimized.webp">↓ Download Optimized Image</a>
-            </div>
-          </section>
-        </div>
-
-        <!-- TOOL 2: VIDEO -->
-        <div class="tool-section hidden" id="tool-video">
-          <div class="intro">
-            <div>
-              <div class="overline">HIGH-FPS VIDEO ENGINE</div>
-              <h1>Video <span>Compressor</span></h1>
-              <p>Transcode high-framerate clips using FFmpeg.wasm without quality loss.</p>
-            </div>
-            <div class="version">EDITION <b>v2.0</b></div>
-          </div>
-
-          <section class="workspace">
-            <div class="section-head">
-              <div><h2>Upload high-FPS video</h2><p>Select MP4 or MOV files.</p></div>
-            </div>
-            <label class="dropzone" for="fileInputVideo">
-              <input id="fileInputVideo" type="file" accept="video/mp4,video/quicktime" hidden>
-              <span class="upload-icon">🎬</span>
-              <strong>Drop your video clip here</strong>
-              <span class="drop-sub">or <u>browse files</u></span>
-            </label>
-            <div class="editor hidden" id="editorVideo">
-              <p id="videoFileName" class="file-meta"></p>
-              <button class="primary" id="compressVideoBtn">Initialize FFmpeg Transcode <span>→</span></button>
-              <p id="videoStatus" class="drop-sub" style="margin-top:12px;"></p>
-            </div>
-            <div class="result hidden" id="resultVideo">
-              <h2>Transcode Successful</h2>
-              <a class="download" id="downloadVideoBtn" download="compressed-video.mp4">↓ Download Processed Video</a>
-            </div>
-          </section>
-        </div>
-
-        <!-- TOOL 3: ASTRO STACKER -->
-        <div class="tool-section hidden" id="tool-stacker">
-          <div class="intro">
-            <div>
-              <div class="overline">DEEP-SKY PHOTOGRAPHY</div>
-              <h1>Star <span>Stacker</span></h1>
-              <p>Align and merge multiple raw astrophotography exposures to suppress noise.</p>
-            </div>
-            <div class="version">EDITION <b>v2.0</b></div>
-          </div>
-
-          <section class="workspace">
-            <div class="section-head">
-              <div><h2>Upload exposure frames</h2><p>Select multiple starry night captures.</p></div>
-            </div>
-            <label class="dropzone" for="fileInputStack">
-              <input id="fileInputStack" type="file" accept="image/*" multiple hidden>
-              <span class="upload-icon">✨</span>
-              <strong>Drop multiple raw/JPG frames</strong>
-              <span class="drop-sub">or <u>browse files</u></span>
-            </label>
-            <div class="editor hidden" id="editorStack">
-              <p id="stackFileCount" class="file-meta">0 frames loaded</p>
-              <button class="primary" id="stackFramesBtn">Execute Stacking Pipeline <span>→</span></button>
-              <p id="stackStatus" class="drop-sub" style="margin-top:12px;"></p>
-            </div>
-            <div class="result hidden" id="resultStack">
-              <h2>Stacking Pipeline Complete</h2>
-              <canvas id="stackedCanvas" style="width:100%; max-height:300px; object-fit:contain; margin:12px 0;"></canvas>
-              <a class="download" id="downloadStackBtn" download="stacked-astro.png">↓ Download Master Stack</a>
-            </div>
-          </section>
-        </div>
-
-        <footer>
-          <span>© <span id="copyYear">2026</span> AstroCompress Studio Pro. All rights reserved.</span>
-          <span>100% Client-Side Architecture · Privacy Guaranteed</span>
-        </footer>
-      </section>
-    </main>
+<section id="tools" class="wrap">
+  <div class="tabs" role="tablist">
+    <button class="tab on" data-t="photo">Photo Compressor</button>
+    <button class="tab" data-t="video">Video Compressor</button>
+    <button class="tab" data-t="stack">Sky Stacker</button>
   </div>
-  <script src="script.js"></script>
+
+  <div class="panel glass on" id="photo">
+    <h2>Photo Compressor</h2>
+    <p class="muted">Choose PNG for lossless output, or WebP/JPEG with a quality slider for much smaller files.</p>
+    <input type="file" id="pFiles" accept="image/*" multiple>
+    <div class="grid">
+      <label>Format<select id="pFmt"><option value="image/webp">WebP (small, high quality)</option><option value="image/jpeg">JPEG</option><option value="image/png">PNG (lossless)</option></select></label>
+      <label>Quality: <b id="pQv">90</b>%<input type="range" id="pQ" min="50" max="100" value="90"></label>
+      <label>Max width<select id="pW"><option value="0">Original size</option><option value="3840">3840 px</option><option value="2560">2560 px</option><option value="1920">1920 px</option></select></label>
+    </div>
+    <button class="btn" id="pRun">Compress photos</button>
+    <p class="status" id="pStatus"></p><div id="pOut" class="results"></div>
+  </div>
+
+  <div class="panel glass" id="video">
+    <h2>Video Compressor</h2>
+    <p class="muted">Uses H.264 at a visually lossless setting. Best for short clips; very large videos can be slow or fail on phones.</p>
+    <input type="file" id="vFile" accept="video/*">
+    <div class="grid">
+      <label>Quality (lower = better): <b id="vQv">20</b><input type="range" id="vQ" min="16" max="30" value="20"></label>
+    </div>
+    <p class="muted small">16–18 is near-lossless, 20–23 is balanced, 26+ is smallest.</p>
+    <button class="btn" id="vRun">Compress video</button>
+    <p class="status" id="vStatus"></p><div id="vOut" class="results"></div>
+  </div>
+
+  <div class="panel glass" id="stack">
+    <h2>Sky Stacker</h2>
+    <p class="muted">Select 2 or more photos of the same sky taken from a fixed tripod. Average mode reduces noise; Lighten mode builds star trails.</p>
+    <input type="file" id="sFiles" accept="image/*" multiple>
+    <div class="grid">
+      <label>Mode<select id="sMode"><option value="avg">Average (cleaner, less noise)</option><option value="max">Lighten (star trails)</option></select></label>
+      <label>Brightness: <b id="sBv">100</b>%<input type="range" id="sB" min="60" max="250" value="100"></label>
+      <label>Max width<select id="sW"><option value="3000">3000 px (recommended)</option><option value="2000">2000 px (phones)</option><option value="4500">4500 px (large)</option></select></label>
+    </div>
+    <button class="btn" id="sRun">Stack photos</button>
+    <p class="status" id="sStatus"></p>
+    <canvas id="sCanvas" hidden></canvas><div id="sOut" class="results"></div>
+    <p class="muted small">Stars are not auto-aligned, so use a tripod. Hand-held shots will blur.</p>
+  </div>
+</section>
+
+<section class="wrap cards">
+  <div class="glass card"><h3>Private</h3><p>Your files never leave your device. All processing happens in your browser.</p></div>
+  <div class="glass card"><h3>Free forever</h3><p>No account, no watermark and no limits set by us.</p></div>
+  <div class="glass card"><h3>Quality first</h3><p>Lossless PNG and near-lossless video settings keep your detail.</p></div>
+</section>
+
+<section id="about" class="wrap about glass">
+  <h2>About the founder</h2>
+  <p><b>Pranik Ojha</b> is the founder of AstroPress. The goal is simple: free, professional tools for photographers and sky watchers.</p>
+</section>
+
+<section id="faq" class="wrap">
+  <h2>Frequently asked questions</h2>
+  <details class="glass"><summary>Is it really lossless?</summary><p>PNG output is lossless. WebP, JPEG and video are lossy, but high settings look the same to the eye. Smaller files always mean some data is discarded.</p></details>
+  <details class="glass"><summary>Are my files uploaded?</summary><p>No. Everything is processed locally on your device.</p></details>
+  <details class="glass"><summary>Why is video slow?</summary><p>Video is compressed by your own device, so long or very large videos take time and memory.</p></details>
+</section>
+</main>
+
+<footer><div class="wrap">
+  <div>© 2026 Pranik Ojha. All rights reserved. AstroPress and its design are protected by copyright.</div>
+  <div class="muted">You keep full rights to every photo and video you process.</div>
+</div></footer>
+<script src="script.js"></script>
 </body>
 </html>
