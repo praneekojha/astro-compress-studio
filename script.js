@@ -1,151 +1,133 @@
-// Dynamic Copyright Year Update
-document.getElementById('copyYear').textContent = new Date().getFullYear();
+const $ = (s) => document.querySelector(s);
+const fmt = (b) => (b > 1048576 ? (b / 1048576).toFixed(2) + " MB" : (b / 1024).toFixed(1) + " KB");
+const say = (el, t, err) => { el.textContent = t; el.className = "status" + (err ? " err" : ""); };
+const tick = () => new Promise((r) => setTimeout(r));
+const toBlob = (c, type, q) => new Promise((r) => c.toBlob(r, type, q));
+const extOf = (type) => ({ "image/webp": "webp", "image/jpeg": "jpg", "image/png": "png" }[type]);
 
-// Tool Navigation Switching
-const navLinks = document.querySelectorAll('.nav');
-const toolSections = document.querySelectorAll('.tool-section');
-const currentCrumb = document.getElementById('currentCrumb');
+/* Tabs and slider labels */
+document.querySelectorAll(".tab").forEach((t) => (t.onclick = () => {
+  document.querySelectorAll(".tab,.panel").forEach((e) => e.classList.remove("on"));
+  t.classList.add("on");
+  $("#" + t.dataset.t).classList.add("on");
+}));
+[["pQ", "pQv"], ["vQ", "vQv"], ["sB", "sBv"]].forEach(([a, b]) => ($("#" + a).oninput = (e) => ($("#" + b).textContent = e.target.value)));
 
-navLinks.forEach(nav => {
-  nav.addEventListener('click', (e) => {
-    e.preventDefault();
-    navLinks.forEach(n => n.classList.remove('active'));
-    nav.classList.add('active');
-    const tool = nav.getAttribute('data-tool');
-    toolSections.forEach(sec => sec.classList.add('hidden'));
-    document.getElementById(`tool-${tool}`).classList.remove('hidden');
-    currentCrumb.innerHTML = `Workspace <span>/</span> ${nav.textContent.trim()}`;
+/* Photo compressor */
+$("#pRun").onclick = async () => {
+  const files = [...$("#pFiles").files], st = $("#pStatus"), out = $("#pOut");
+  if (!files.length) return say(st, "Please choose at least one photo.", 1);
+  out.innerHTML = "";
+  const type = $("#pFmt").value, q = $("#pQ").value / 100, maxW = +$("#pW").value;
+  let n = 0;
+  for (const f of files) {
+    say(st, `Compressing ${++n} of ${files.length}…`);
+    try {
+      const bmp = await createImageBitmap(f);
+      let w = bmp.width, h = bmp.height;
+      if (maxW && w > maxW) { h = Math.round((h * maxW) / w); w = maxW; }
+      const c = document.createElement("canvas");
+      c.width = w; c.height = h;
+      c.getContext("2d").drawImage(bmp, 0, 0, w, h);
+      bmp.close();
+      const blob = await toBlob(c, type, q);
+      const saved = Math.round((1 - blob.size / f.size) * 100);
+      const row = document.createElement("div");
+      row.className = "row";
+      const name = f.name.replace(/\.[^.]+$/, "") + "-compressed." + extOf(type);
+      row.innerHTML = `<span>${f.name}<br>${fmt(f.size)} → ${fmt(blob.size)} (${saved >= 0 ? saved + "% smaller" : "larger; original was already optimized"})</span>`;
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob); a.download = name; a.textContent = "Download";
+      row.appendChild(a); out.appendChild(row);
+    } catch (e) { say(st, "Could not read " + f.name, 1); }
+    await tick();
+  }
+  say(st, "Done.");
+};
+
+/* Video compressor (ffmpeg.wasm loaded only when needed) */
+let ff;
+const loadScript = (u) => new Promise((ok, no) => { const s = document.createElement("script"); s.src = u; s.onload = ok; s.onerror = () => no(new Error("load " + u)); document.head.appendChild(s); });
+async function getFF(st) {
+  if (ff) return ff;
+  const cdn = "https://cdn.jsdelivr.net/npm/";
+  const lib = cdn + "@ffmpeg/ffmpeg@0.12.10/dist/umd/", core = cdn + "@ffmpeg/core@0.12.6/dist/umd/";
+  await loadScript(lib + "ffmpeg.js");
+  await loadScript(cdn + "@ffmpeg/util@0.12.1/dist/umd/index.js");
+  const { toBlobURL } = FFmpegUtil;
+  ff = new FFmpegWASM.FFmpeg();
+  ff.on("progress", ({ progress }) => say(st, "Compressing… " + Math.min(100, Math.round(progress * 100)) + "%"));
+  await ff.load({
+    coreURL: await toBlobURL(core + "ffmpeg-core.js", "text/javascript"),
+    wasmURL: await toBlobURL(core + "ffmpeg-core.wasm", "application/wasm"),
+    classWorkerURL: await toBlobURL(lib + "814.ffmpeg.js", "text/javascript"),
   });
-});
-
-// Image Compressor Handler
-const fileInputImg = document.getElementById('fileInputImg');
-const editorImg = document.getElementById('editorImg');
-const previewImg = document.getElementById('previewImg');
-const qualityImg = document.getElementById('qualityImg');
-const qualityVal = document.getElementById('qualityVal');
-const resultImg = document.getElementById('resultImg');
-let currentImgFile = null;
-
-fileInputImg.addEventListener('change', (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  currentImgFile = file;
-  previewImg.src = URL.createObjectURL(file);
-  document.getElementById('originalMetaImg').textContent = `${file.name} · ${(file.size/1024).toFixed(1)} KB`;
-  editorImg.classList.remove('hidden');
-  resultImg.classList.add('hidden');
-});
-
-qualityImg.addEventListener('input', () => qualityVal.textContent = `${qualityImg.value}%`);
-
-document.getElementById('compressImgBtn').addEventListener('click', async () => {
-  if (!currentImgFile) return;
-  const img = new Image();
-  img.src = previewImg.src;
-  await img.decode();
-  const canvas = document.createElement('canvas');
-  canvas.width = img.naturalWidth;
-  canvas.height = img.naturalHeight;
-  canvas.getContext('2d').drawImage(img, 0, 0);
-  
-  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/webp', qualityImg.value / 100));
-  const url = URL.createObjectURL(blob);
-  const downloadBtn = document.getElementById('downloadImgBtn');
-  downloadBtn.href = url;
-  document.getElementById('resultNoteImg').textContent = `Optimized size: ${(blob.size/1024).toFixed(1)} KB (Saved ${Math.max(0, (1 - blob.size/currentImgFile.size)*100).toFixed(1)}%)`;
-  resultImg.classList.remove('hidden');
-});
-
-// Video Compressor Handler (FFmpeg.wasm)
-const fileInputVideo = document.getElementById('fileInputVideo');
-const editorVideo = document.getElementById('editorVideo');
-const resultVideo = document.getElementById('resultVideo');
-let videoFile = null;
-
-fileInputVideo.addEventListener('change', (e) => {
-  videoFile = e.target.files[0];
-  if (!videoFile) return;
-  document.getElementById('videoFileName').textContent = `${videoFile.name} (${(videoFile.size/(1024*1024)).toFixed(1)} MB)`;
-  editorVideo.classList.remove('hidden');
-  resultVideo.classList.add('hidden');
-});
-
-document.getElementById('compressVideoBtn').addEventListener('click', async () => {
-  const status = document.getElementById('videoStatus');
-  status.textContent = 'Loading local WebAssembly FFmpeg engine...';
+  return ff;
+}
+$("#vRun").onclick = async () => {
+  const f = $("#vFile").files[0], st = $("#vStatus"), out = $("#vOut"), btn = $("#vRun");
+  if (!f) return say(st, "Please choose a video.", 1);
+  btn.disabled = true; out.innerHTML = "";
   try {
-    const { FFmpeg } = FFmpegWASM;
-    const ffmpeg = new FFmpeg();
-    await ffmpeg.load();
-    
-    status.textContent = 'Ingesting video stream...';
-    const data = await videoFile.arrayBuffer();
-    await ffmpeg.writeFile('input.mp4', new Uint8Array(data));
-    
-    status.textContent = 'Processing video frames (CRF 28)...';
-    await ffmpeg.exec(['-i', 'input.mp4', '-vcodec', 'libx264', '-crf', '28', 'output.mp4']);
-    
-    status.textContent = 'Finalizing transcode package...';
-    const outputData = await ffmpeg.readFile('output.mp4');
-    const blob = new Blob([outputData.buffer], { type: 'video/mp4' });
+    say(st, "Loading the video engine (first time only)…");
+    const ffm = await getFF(st);
+    const inName = "input" + (f.name.match(/\.\w+$/) || [".mp4"])[0];
+    await ffm.writeFile(inName, await FFmpegUtil.fetchFile(f));
+    await ffm.exec(["-i", inName, "-c:v", "libx264", "-crf", $("#vQ").value, "-preset", "veryfast", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "160k", "-movflags", "+faststart", "out.mp4"]);
+    const data = await ffm.readFile("out.mp4");
+    const blob = new Blob([data.buffer], { type: "video/mp4" });
     const url = URL.createObjectURL(blob);
-    
-    document.getElementById('downloadVideoBtn').href = url;
-    resultVideo.classList.remove('hidden');
-    status.textContent = 'Transcoding completed successfully!';
-  } catch (err) {
-    status.textContent = 'Error: ' + err.message;
-  }
-});
+    const row = document.createElement("div");
+    row.className = "row";
+    row.innerHTML = `<span>${f.name}<br>${fmt(f.size)} → ${fmt(blob.size)}</span><video src="${url}" controls playsinline width="100%"></video><a href="${url}" download="${f.name.replace(/\.[^.]+$/, "")}-compressed.mp4">Download</a>`;
+    out.appendChild(row);
+    say(st, "Done.");
+    await ffm.deleteFile(inName); await ffm.deleteFile("out.mp4");
+  } catch (e) { say(st, "Video compression failed. Try a shorter clip or a desktop browser.", 1); }
+  btn.disabled = false;
+};
 
-// Astrophotography Stacker Handler
-const fileInputStack = document.getElementById('fileInputStack');
-const editorStack = document.getElementById('editorStack');
-const resultStack = document.getElementById('resultStack');
-let stackFiles = [];
-
-fileInputStack.addEventListener('change', (e) => {
-  stackFiles = Array.from(e.target.files);
-  if (stackFiles.length === 0) return;
-  document.getElementById('stackFileCount').textContent = `${stackFiles.length} raw/exposure frames queued`;
-  editorStack.classList.remove('hidden');
-  resultStack.classList.add('hidden');
-});
-
-document.getElementById('stackFramesBtn').addEventListener('click', async () => {
-  const status = document.getElementById('stackStatus');
-  status.textContent = 'Aligning centroid pixels and stacking frames...';
-  
+/* Sky stacker */
+$("#sRun").onclick = async () => {
+  const files = [...$("#sFiles").files], st = $("#sStatus"), cv = $("#sCanvas"), out = $("#sOut"), btn = $("#sRun");
+  if (files.length < 2) return say(st, "Please choose at least 2 photos.", 1);
+  btn.disabled = true; out.innerHTML = ""; cv.hidden = true;
+  const mode = $("#sMode").value, maxW = +$("#sW").value, gamma = 100 / $("#sB").value;
+  let w, h, acc, n = 0;
   try {
-    const images = await Promise.all(stackFiles.map(file => {
-      return new Promise((resolve) => {
-        const img = new Image();
-        img.src = URL.createObjectURL(file);
-        img.onload = () => resolve(img);
-      });
-    }));
-
-    const canvas = document.getElementById('stackedCanvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = images[0].naturalWidth;
-    canvas.height = images[0].naturalHeight;
-    
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(images[0], 0, 0);
-
-    for (let i = 1; i < images.length; i++) {
-      ctx.globalAlpha = 1 / (i + 1);
-      ctx.drawImage(images[i], 0, 0);
+    for (const f of files) {
+      say(st, `Stacking ${++n} of ${files.length}…`);
+      const bmp = await createImageBitmap(f);
+      if (!acc) { w = Math.min(bmp.width, maxW); h = Math.round((bmp.height * w) / bmp.width); acc = new Float32Array(w * h * 3); }
+      const c = document.createElement("canvas");
+      c.width = w; c.height = h;
+      const ctx = c.getContext("2d");
+      ctx.drawImage(bmp, 0, 0, w, h);
+      bmp.close();
+      const d = ctx.getImageData(0, 0, w, h).data;
+      for (let i = 0, j = 0; i < d.length; i += 4, j += 3) {
+        if (mode === "max") { for (let k = 0; k < 3; k++) if (d[i + k] > acc[j + k]) acc[j + k] = d[i + k]; }
+        else { acc[j] += d[i]; acc[j + 1] += d[i + 1]; acc[j + 2] += d[i + 2]; }
+      }
+      await tick();
     }
-
-    canvas.toBlob((blob) => {
-      document.getElementById('downloadStackBtn').href = URL.createObjectURL(blob);
-      resultStack.classList.remove('hidden');
-      status.textContent = 'Stacking pipeline finished!';
-    }, 'image/png');
-
-  } catch (err) {
-    status.textContent = 'Stacking calculation error: ' + err.message;
-  }
-});
+    say(st, "Building final image…");
+    cv.width = w; cv.height = h;
+    const ctx = cv.getContext("2d"), img = ctx.createImageData(w, h), div = mode === "max" ? 1 : files.length;
+    for (let i = 0, j = 0; i < img.data.length; i += 4, j += 3) {
+      for (let k = 0; k < 3; k++) img.data[i + k] = 255 * Math.pow(acc[j + k] / div / 255, gamma);
+      img.data[i + 3] = 255;
+    }
+    ctx.putImageData(img, 0, 0);
+    cv.hidden = false;
+    const blob = await toBlob(cv, "image/png");
+    const row = document.createElement("div");
+    row.className = "row";
+    row.innerHTML = `<span>${files.length} photos stacked · ${w}×${h} · ${fmt(blob.size)}</span>`;
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = "astro-stack.png"; a.textContent = "Download PNG";
+    row.appendChild(a); out.appendChild(row);
+    say(st, "Done.");
+  } catch (e) { say(st, "Stacking failed. Try a smaller max width or fewer photos.", 1); }
+  btn.disabled = false;
+};
