@@ -1,78 +1,143 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AstroPress - Media Processing</title>
-
-  <!-- Open Graph & Social Media Sharing Meta Tags (Shows Logo on Share Links) -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://yourwebsite.com/">
-  <meta property="og:title" content="AstroPress - High Quality Video Processing">
-  <meta property="og:description" content="Compress and scale your videos up to 4K without losing FPS.">
-  <meta property="og:image" content="https://yourwebsite.com/logo.png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:url" content="https://yourwebsite.com/">
-  <meta name="twitter:title" content="AstroPress - Video Compressor">
-  <meta name="twitter:description" content="Compress and scale videos seamlessly.">
-  <meta name="twitter:image" content="https://yourwebsite.com/logo.png">
-
-  <!-- Stylesheet -->
-  <link rel="stylesheet" href="style.css">
-
-  <!-- Load FFmpeg.wasm Library for Browser-Side Video Processing -->
-  <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AstroPress – Free Video Compressor (4K, 2K, 1080p, 720p)</title>
+<meta name="description" content="Compress videos for free in your browser. Keep original quality and FPS or export 4K, 2K, 1080p, 720p. Private: nothing is uploaded.">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#12182B">
+<meta property="og:type" content="website">
+<meta property="og:title" content="AstroPress – Free Video Compressor">
+<meta property="og:description" content="Compress videos privately in your browser. Original quality or 4K to 720p.">
+<meta property="og:image" content="logo.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Manrope:wght@500;700;800&family=Noto+Sans+Devanagari:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-  <div class="card">
-    <div class="header">
-      <img src="logo.png" alt="AstroPress Logo" class="app-logo">
-      <h2>AstroPress</h2>
-    </div>
-
-    <!-- Media Input -->
-    <div class="form-group">
-      <label for="videoInput">Select Video or Photo:</label>
-      <input type="file" id="videoInput" accept="video/*,image/*">
-    </div>
-
-    <!-- Video Preview -->
-    <video id="previewVideo" controls style="display:none;"></video>
-
-    <!-- Resolution Selector (4K, 2K, 1080p, 720p) -->
-    <div class="form-group">
-      <label for="resolutionSelect">Resolution (never upscales):</label>
-      <select id="resolutionSelect">
-        <option value="2160">4K (2160p)</option>
-        <option value="1440">2K (1440p)</option>
-        <option value="1080" selected>1080p</option>
-        <option value="720">720p</option>
-      </select>
-    </div>
-
-    <!-- CRF Slider -->
-    <div class="form-group">
-      <label for="crfRange">Quality: CRF (<span id="crfValue">18</span>)</label>
-      <input type="range" id="crfRange" min="16" max="28" value="18">
-      <small>16–18 near-lossless, 20–23 balanced, 26+ smallest size.</small>
-    </div>
-
-    <button id="compressBtn">Process & Compress Video</button>
-
-    <!-- Status & Error Output -->
-    <div id="statusMessage" class="status" style="display:none;"></div>
-
-    <!-- Download Output -->
-    <div id="downloadContainer" style="display:none; margin-top: 15px;">
-      <a id="downloadBtn" href="#" download="compressed_astropress.mp4">Download Output Video</a>
-    </div>
+<header class="nav">
+  <a class="brand" href="#top">🚀 AstroPress</a>
+  <nav><a href="#tool">Compressor</a><a href="#features">Features</a><a href="#faq">FAQ</a><a href="#privacy">Privacy</a></nav>
+  <div class="tools">
+    <div class="seg" id="langSeg"><button data-l="en" class="on">English</button><button data-l="ne">नेपाली</button></div>
+    <div class="seg" id="themeSeg"><button data-t="light">☀️ Day</button><button data-t="dark">🌙 Night</button></div>
   </div>
+</header>
 
-  <script src="script.js"></script>
+<main id="top">
+  <section class="hero">
+    <span class="tag">100% FREE · NO UPLOAD</span>
+    <h1>Shrink video.<br><em>Keep the magic.</em></h1>
+    <p>Compress right in your browser on iPhone, Android and desktop. Your files never leave your device.</p>
+    <a class="btn gold" href="#tool">Start compressing</a>
+  </section>
+
+  <section id="tool" class="card">
+    <div class="chips tabs" id="tabs"><button class="chip on" data-p="p-video">🎬 Video</button><button class="chip" data-p="p-photo">🖼️ Photo</button><button class="chip" data-p="p-stack">🌌 Sky stacker</button></div>
+    <div class="panel" id="p-video">
+    <span class="tag">ENCODE VIDEO</span>
+    <h2>Compress video</h2>
+    <p class="sub">Pick an output size, then choose a quality level.</p>
+
+    <div class="chips" id="resChips" role="group" aria-label="Resolution">
+      <button class="chip on" data-v="orig">Original<small>same quality + FPS</small></button>
+      <button class="chip" data-v="2160">4K</button>
+      <button class="chip" data-v="1440">2K</button>
+      <button class="chip" data-v="1080">1080p</button>
+      <button class="chip" data-v="720">720p</button>
+    </div>
+    <div class="note" id="resNote">Original keeps your resolution and frame rate and only reduces file size.</div>
+
+    <div class="chips three" id="qChips" role="group" aria-label="Quality">
+      <button class="chip" data-v="high">High</button>
+      <button class="chip on" data-v="balanced">Balanced</button>
+      <button class="chip" data-v="small">Smallest</button>
+    </div>
+
+    <label class="drop" for="file">
+      <span class="plus">+</span>
+      <b id="fname">Choose video</b>
+      <small id="finfo">MP4, MOV, MKV, WEBM</small>
+    </label>
+    <input type="file" id="file" accept="video/*" hidden>
+    <video id="prev" controls playsinline muted hidden></video>
+    <div class="card sm info" id="vinfo" hidden>
+      <h3>Video info</h3>
+      <div class="ig">
+        <div><small>QUALITY</small><b id="iq">–</b></div><div><small>RESOLUTION</small><b id="ir">–</b></div>
+        <div><small>FPS</small><b id="ifps">–</b></div><div><small>FORMAT</small><b id="ifm">–</b></div>
+        <div><small>DURATION</small><b id="idur">–</b></div><div><small>BITRATE</small><b id="ib">–</b></div>
+        <div><small>CODEC</small><b id="ic">–</b></div><div><small>VIDEO SIZE</small><b id="is">–</b></div>
+      </div>
+    </div>
+
+    <button id="go" class="btn rose" disabled>Choose a video first</button>
+    <div class="progress" id="pw" hidden><div id="bar"></div></div>
+    <div id="msg" class="msg" hidden></div>
+
+    <div id="done" hidden>
+      <div class="result" id="stats"></div>
+      <div id="saveOpts" hidden><button id="gallery" class="btn mint">Save Video to Gallery</button>
+      <button id="save" class="btn gold">Save to Folder (Files)</button></div>
+      <button id="askBtn" class="btn gold" hidden>Allow saving</button>
+    </div>
+    <p class="fine">Tip: keep this tab open and on screen while processing. It runs at the video's normal playback speed.</p>
+    </div>
+    <div class="panel" id="p-photo" hidden>
+      <span class="tag">COMPRESS PHOTO</span><h2>Compress photos</h2>
+      <p class="sub">Shrink JPG, PNG or WebP files. Output is JPG. Never upscales.</p>
+      <label class="lbl">Longest side<select id="pmax"><option value="0">Original size</option><option value="3840">4K (3840 px)</option><option value="2560">2K (2560 px)</option><option value="1920">1080p (1920 px)</option><option value="1280">720p (1280 px)</option></select></label>
+      <label class="lbl">Quality: <b id="pqv">82</b>%<input type="range" id="pq" min="40" max="98" value="82"></label>
+      <label class="drop" for="pfile"><span class="plus">+</span><b id="pname">Choose photos</b><small>JPG, PNG, WEBP</small></label>
+      <input type="file" id="pfile" accept="image/*" multiple hidden>
+      <button id="pgo" class="btn rose" disabled>Choose photos first</button>
+      <div id="pmsg" class="msg" hidden></div><div id="plist"></div>
+    </div>
+    <div class="panel" id="p-stack" hidden>
+      <span class="tag">ASTROPHOTOGRAPHY</span><h2>Sky stacker</h2>
+      <p class="sub">Join several sky photos into one cleaner image. Best for tripod or tracker shots taken from the same spot.</p>
+      <label class="lbl">Method<select id="smode"><option value="avg">Average – less noise, clearer sky</option><option value="max">Lighten – star trails</option></select></label>
+      <label class="drop" for="sfile"><span class="plus">+</span><b id="sname">Choose 2 or more photos</b><small>JPG, PNG, WEBP</small></label>
+      <input type="file" id="sfile" accept="image/*" multiple hidden>
+      <button id="sgo" class="btn rose" disabled>Choose photos first</button>
+      <div id="smsg" class="msg" hidden></div>
+      <div id="sres" hidden><img id="sout" alt="Stacked result"><button id="ssave" class="btn gold">Save stacked image</button></div>
+    </div>
+  </section>
+
+  <section id="features" class="grid">
+    <article class="card sm"><h3>🔒 Private</h3><p>Everything runs on your device. No uploads, no accounts, no tracking.</p></article>
+    <article class="card sm"><h3>🎞️ Original FPS</h3><p>Frame rate is preserved. Resolution is never upscaled.</p></article>
+    <article class="card sm"><h3>📱 Works everywhere</h3><p>Chrome, Safari, Edge, Firefox on phone and desktop.</p></article>
+  </section>
+
+  <section class="card" id="how">
+    <h2>How it works</h2>
+    <ol><li>Choose Original or a target size (4K, 2K, 1080p, 720p).</li><li>Pick a quality and select your video.</li><li>Tap compress, then save to Gallery or Files.</li></ol>
+  </section>
+
+  <section class="card" id="faq">
+    <h2>FAQ</h2>
+    <details><summary>Is it really free?</summary><p>Yes. No limits, watermarks or sign-up.</p></details>
+    <details><summary>Why does it take as long as the video?</summary><p>For compatibility with Safari and Chrome, the video is re-recorded at normal speed. A 2-minute clip takes about 2 minutes.</p></details>
+    <details><summary>Why is my result MP4 or WebM?</summary><p>Safari and recent Chrome save MP4. Older browsers may save WebM.</p></details>
+    <details><summary>Can it make a video bigger?</summary><p>No. Choosing a size larger than your video keeps the original size.</p></details>
+  </section>
+
+  <section class="card" id="privacy">
+    <h2>Privacy &amp; Terms</h2>
+    <p>AstroPress processes files locally in your browser. We do not upload, store or view your media. The service is provided "as is" without warranty. Always keep a backup of your original files.</p>
+  </section>
+</main>
+
+<footer>
+  <p>© <span id="yr">2026</span> AstroPress. All rights reserved. Created by Pranik Ojha.</p>
+  <p>All trademarks and brand names belong to their respective owners.</p>
+</footer>
+<div class="modal" id="perm" hidden><div class="card sm"><h3>Allow saving?</h3><p>AstroPress needs your permission to save the compressed file to your device. We ask only once.</p><button id="permYes" class="btn gold">Allow</button><button id="permNo" class="btn mint">Not now</button></div></div>
+<script src="script.js"></script>
 </body>
 </html>
